@@ -1,0 +1,33 @@
+# ROS2 / colcon
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# ROS bags / datasets
+*.db3
+*.mcap
+bags/
+bag/
+data/
+datasets/
+
+# Temporary files
+*.tmp
+*.log
