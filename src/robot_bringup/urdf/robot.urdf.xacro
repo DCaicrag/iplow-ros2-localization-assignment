@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="iplow_robot">
+
+  <!--
+    Frame translations are taken from the assignment's /tf_static ground truth.
+
+    IMPORTANT:
+    The assignment document provides frame translations but does not explicitly
+    provide frame rotations. The rpy values below are therefore provisional
+    zeros and must be verified against the recorded /tf_static data.
+  -->
+
+  <!-- Root frame -->
+  <link name="base"/>
+
+  <!-- Robot body / chassis -->
+  <link name="body">
+    <visual name="chassis">
+      <origin xyz="0 0 0.20" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.20 0.75 0.30"/>
+      </geometry>
+      <material name="chassis_gray">
+        <color rgba="0.35 0.35 0.35 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Approximate wheel geometry.
+         Wheels are visuals of body rather than additional TF frames. -->
+    <visual name="front_left_wheel">
+      <origin xyz="0.38 0.42 0.03" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.18" length="0.10"/>
+      </geometry>
+      <material name="wheel_black">
+        <color rgba="0.08 0.08 0.08 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="front_right_wheel">
+      <origin xyz="0.38 -0.42 0.03" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.18" length="0.10"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+
+    <visual name="rear_left_wheel">
+      <origin xyz="-0.38 0.42 0.03" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.18" length="0.10"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+
+    <visual name="rear_right_wheel">
+      <origin xyz="-0.38 -0.42 0.03" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.18" length="0.10"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+  </link>
+
+  <!-- LiDAR frame -->
+  <link name="livox_frame">
+    <visual name="lidar">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.055" length="0.075"/>
+      </geometry>
+      <material name="lidar_blue">
+        <color rgba="0.10 0.35 0.80 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- LiDAR IMU frame -->
+  <link name="livox_imu"/>
+
+  <!-- GPS frame -->
+  <link name="gps">
+    <visual name="gps_receiver">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.12 0.12 0.06"/>
+      </geometry>
+      <material name="gps_green">
+        <color rgba="0.10 0.65 0.25 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Static frame tree -->
+
+  <joint name="base_to_body" type="fixed">
+    <parent link="base"/>
+    <child link="body"/>
+    <origin xyz="0.0569 -0.0028 0.2234" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="body_to_livox" type="fixed">
+    <parent link="body"/>
+    <child link="livox_frame"/>
+    <origin xyz="-0.1201 0.0026 0.9655" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="livox_to_imu" type="fixed">
+    <parent link="livox_frame"/>
+    <child link="livox_imu"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="body_to_gps" type="fixed">
+    <parent link="body"/>
+    <child link="gps"/>
+    <origin xyz="-0.6500 0.2000 0.1700" rpy="0 0 0"/>
+  </joint>
+
+</robot>
