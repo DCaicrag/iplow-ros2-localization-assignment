@@ -10,6 +10,12 @@ install(
 )
 
 install(
+  FILES
+    nodes/localization_math.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
   DIRECTORY
     launch
     rviz
