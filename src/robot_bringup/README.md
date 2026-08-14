@@ -197,12 +197,6 @@ Sanity checks: trajectory contains motion; no jump >1 m; point-cloud frame stays
 
 ---
 
-## Notable Engineering Decisions
-
-- **RViz over remote X11:** during one long remote validation run, RViz crashed with a graphical segfault (exit code -11) partway through, while `rosbag2_player`, the localization node, TF publication, and the validation monitor all completed successfully (3138 point-cloud messages, all consistency checks passed). Treated as a remote graphical-session issue, not a localization failure. RViz runs normally on local Ubuntu execution.
-
----
-
 ## Assumptions
 
 1. The first valid GPS fix is an appropriate local ENU reference origin.
