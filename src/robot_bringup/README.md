@@ -2,34 +2,44 @@
 
 ROS2 Humble implementation for the iPlow Robot technical assignment.
 
-This package reconstructs the robot pose from recorded GPS position and heading data when dynamic odometry is not available in the ROS2 bag. It also provides the TF tree, robot model, launch orchestration, and RViz configuration required to visualize the moving LiDAR point cloud in a global frame.
+This project reconstructs the robot pose from recorded GPS position and heading data, since dynamic odometry is not available in the provided ROS2 bag.
 
-## Overview
+**Implements:**
+- GPS-to-ENU localization
+- Heading extraction from `/navheading`
+- Dynamic `odom -> base` TF publication
+- Robot URDF/Xacro and static TF hierarchy
+- ROS2 launch orchestration
+- RViz visualization of the moving LiDAR point cloud
+- Unit tests + full-run runtime validation
 
-The localization pipeline uses:
+The implementation intentionally focuses on the requested baseline solution rather than introducing SLAM or sensor-fusion frameworks.
 
-* `/ublox_gps_node/fix` for robot position.
-* `/navheading` for robot heading.
-* The first valid GPS fix as the local reference origin.
-* A WGS84-based conversion from geodetic coordinates to local East-North-Up (ENU) coordinates.
-* The quaternion contained in `/navheading` to recover robot yaw.
-* A dynamic `odom -> base` transform published at approximately 10 Hz.
+---
 
-The localization node publishes:
+## Quick Start
 
-* `/robot_pose` — `geometry_msgs/PoseStamped`
-* `/odom` — `nav_msgs/Odometry`
-* dynamic TF `odom -> base`
+**Target environment:** Ubuntu 22.04 · ROS2 Humble · Python 3.10
 
-The package additionally provides:
+### Build
 
-* a URDF/Xacro robot model;
-* static robot frame geometry;
-* `robot_state_publisher`;
-* `joint_state_publisher`;
-* a static identity transform `map -> odom`;
-* an integrated ROS2 launch file;
-* a preconfigured RViz visualization.
+```bash
+source /opt/ros/humble/setup.bash
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --packages-select robot_bringup
+source install/setup.bash
+```
+
+### Run
+
+```bash
+ros2 launch robot_bringup bag_localize.launch.py \
+  bag_path:=/absolute/path/to/bag
+```
+
+This launches, in order: bag playback (`--clock`), `robot_state_publisher`, `joint_state_publisher`, the localization node, a static identity transform `map -> odom`, and RViz2 with the supplied configuration. The bag path is a launch argument, not hardcoded. The stack runs on simulated ROS time since the bag publishes `/clock`. The first valid GPS fix automatically becomes the local ENU origin.
+
+---
 
 ## Architecture
 
@@ -43,318 +53,192 @@ map
                 └── livox_imu
 ```
 
-`map -> odom` is an identity static transform.
+- `map -> odom`: identity static transform
+- `odom -> base`: published dynamically at ~10 Hz, from GPS (WGS84 → local ENU: x=East, y=North, z=Up) for position, and `/navheading`'s orientation quaternion for yaw
+- Remaining frames come from the URDF via `robot_state_publisher`
 
-`odom -> base` is generated dynamically from:
+**Outputs:** `/robot_pose` (`PoseStamped`), `/odom` (`Odometry`), dynamic TF `odom -> base` — all sharing the same pose estimate and timestamp.
 
-```text
-GPS
- ↓
-WGS84 geodetic coordinates
- ↓
-local ENU position
- ↓
-x = East
-y = North
-z = Up
-```
+---
 
-and:
+## Repository Structure
 
 ```text
-/navheading
- ↓
-orientation quaternion
- ↓
-yaw
+.
+├── src/robot_bringup/
+│   ├── CMakeLists.txt, package.xml, README.md
+│   ├── launch/bag_localize.launch.py
+│   ├── nodes/localization_math.py, localization_node.py
+│   ├── rviz/config.rviz
+│   ├── test/test_localization_math.py
+│   └── urdf/robot.urdf.xacro
+├── tools/run_full_validation.py
+└── validation_results/full_validation_reference.txt
 ```
 
-The remaining robot transforms are provided by the URDF through `robot_state_publisher`.
-
-## Package Structure
-
-```text
-robot_bringup/
-├── CMakeLists.txt
-├── package.xml
-├── launch/
-│   └── bag_localize.launch.py
-├── nodes/
-│   ├── localization_math.py
-│   └── localization_node.py
-├── rviz/
-│   └── config.rviz
-├── test/
-│   └── test_localization_math.py
-├── urdf/
-│   └── robot.urdf.xacro
-└── README.md
-```
+---
 
 ## Localization Design
 
-### GPS Reference
+**GPS reference:** the first valid fix is stored as `(ref_lat, ref_lon, ref_alt)`; all later fixes are expressed relative to it. Messages with missing or non-finite coordinates are ignored.
 
-The first valid GPS fix is stored as:
+**GPS → ENU:** implemented in `localization_math.py` following the WGS84 approximation from the assignment, kept separate from ROS2 runtime logic so it can be unit tested independently.
 
-```text
-(ref_lat, ref_lon, ref_alt)
-```
+**Heading:** `/navheading` is a `sensor_msgs/Imu` message; orientation is read from `msg.orientation` (ROS ordering `x, y, z, w`) and converted to yaw via `atan2` — no external quaternion library needed. Yaw is used directly as robot orientation, per the assignment's requirement.
 
-Subsequent GPS measurements are expressed relative to this reference.
+Alternative heading conventions (e.g. `-yaw`, `yaw ± pi/2`, `yaw + pi`) were checked against GPS displacement and recorded velocity direction as sanity checks only, since the dataset has no independent dynamic orientation ground truth. No convention error was clearly evidenced, so the direct quaternion-to-yaw extraction was kept.
 
-Messages without a valid GPS fix or with non-finite coordinates are ignored.
+**Sensor QoS:** subscriptions use `BEST_EFFORT` reliability and `VOLATILE` durability for compatibility with bag-replayed topics.
 
-### GPS to ENU
+---
 
-The conversion implemented in `localization_math.py` follows the WGS84 approximation provided in the assignment.
+## Robot Model and Static TF
 
-The resulting local coordinates follow the ENU convention:
+The URDF reproduces the hierarchy `base -> body -> {gps, livox_frame -> livox_imu}`, with approximate visual geometry for the chassis, wheels, LiDAR, and GPS receiver (geometry is illustrative; the TF hierarchy and sensor-frame relationships are what matter for localization).
 
-```text
-x = East
-y = North
-z = Up
-```
+Static transforms were confirmed directly from the recorded `/tf_static` messages:
 
-### Heading
+| Transform | x | y | z | roll | pitch | yaw |
+|---|---|---|---|---|---|---|
+| `base -> body` | 0.0569 | -0.0028 | 0.2234 | 0 | 0 | 0 |
+| `body -> gps` | -0.6500 | 0.2000 | 0.1700 | 0 | 0 | 0 |
+| `body -> livox_frame` | -0.1201 | 0.0026 | 0.9655 | π | 0 | π/2 |
+| `livox_frame -> livox_imu` | 0 | 0 | 0 | 0 | 0 | 0 |
 
-`/navheading` is a `sensor_msgs/Imu` message.
+The `body -> livox_frame` rotation was recovered from the recorded quaternion and used in the URDF, replacing an initial development assumption of zero rotation.
 
-The orientation is read from:
-
-```text
-msg.orientation
-```
-
-ROS quaternion ordering is handled explicitly as:
-
-```text
-(x, y, z, w)
-```
-
-The quaternion is converted to yaw using a direct mathematical implementation based on `atan2`, avoiding an additional runtime dependency.
-
-### Pose Publication
-
-Once both position and heading are available, the node publishes at approximately 10 Hz:
-
-```text
-/robot_pose
-/odom
-odom -> base
-```
-
-The same timestamp and pose estimate are used for all three outputs.
-
-## Sensor QoS
-
-Sensor subscriptions use:
-
-```text
-ReliabilityPolicy.BEST_EFFORT
-DurabilityPolicy.VOLATILE
-```
-
-to improve compatibility with sensor topics recorded in ROS2 bags.
-
-## Robot Model
-
-The URDF reproduces the frame hierarchy specified in the assignment:
-
-```text
-base
-└── body
-    ├── gps
-    └── livox_frame
-        └── livox_imu
-```
-
-Frame translations use the values provided as ground truth by the assignment.
-
-Approximate visual geometry is included for:
-
-* chassis;
-* wheels;
-* Livox LiDAR;
-* GPS receiver.
-
-### Current Static-TF Assumption
-
-The assignment document explicitly provides the frame translations but does not provide the corresponding frame rotations.
-
-Therefore, the initial URDF uses:
-
-```text
-rpy="0 0 0"
-```
-
-for the static joints.
-
-These rotations must be compared against the actual `/tf_static` messages in the provided ROS2 bag during runtime validation.
-
-## Launch File
-
-`bag_localize.launch.py` is designed to start:
-
-1. ROS2 bag playback with `--clock`;
-2. `robot_state_publisher`;
-3. `joint_state_publisher`;
-4. the custom localization node;
-5. static identity transform `map -> odom`;
-6. RViz2 with the provided configuration.
-
-The bag location is supplied as a launch argument rather than being hardcoded.
-
-Expected usage:
-
-```bash
-ros2 launch robot_bringup bag_localize.launch.py \
-  bag_path:=/absolute/path/to/bag
-```
-
-The launch file defaults to:
-
-```text
-use_sim_time:=true
-```
-
-because the bag is played using `/clock`.
+---
 
 ## RViz Configuration
 
-The supplied RViz configuration contains:
+`config.rviz` is preconfigured with Fixed Frame `map`, Grid, TF, PointCloud2, Pose, and RobotModel displays:
 
-* Fixed Frame: `map`
-* Grid
-* TF
-* PointCloud2:
+- **PointCloud2:** topic `/mid360_filtered`, recorded frame `base`
+- **Pose:** topic `/robot_pose`
+- **RobotModel:** description `/robot_description`
 
-  * topic `/mid360_filtered`
-* Pose:
+The LiDAR point cloud is transformed into the global visualization frame through `map -> odom -> base`. Runtime visualization confirmed coherent robot movement and point-cloud behavior during bag playback.
 
-  * topic `/robot_pose`
-* RobotModel:
+---
 
-  * description `/robot_description`
+## Dataset Notes
 
-The final visualization parameters may be adjusted after runtime validation with the provided bag.
-
-## Offline Validation Completed
-
-The following checks have already been completed without the final bag integration:
-
-* Python syntax validation.
-* WGS84 GPS-to-ENU unit tests.
-* Quaternion-to-yaw unit tests.
-* ENU origin test.
-* ENU altitude-axis test.
-* yaw `0°` test.
-* yaw `+90°` test.
-* yaw `-90°` test.
-* yaw `180°` test.
-* 6/6 localization mathematics tests passing.
-* URDF XML parsing.
-* URDF tree validation using `check_urdf`.
-* `package.xml` XML validation.
-* RViz YAML parsing.
-* repository whitespace validation.
-
-## Runtime Validation Pending
-
-The following items require validation against the actual ROS2 bag and ROS2 Humble runtime:
-
-* clean `colcon build`;
-* installed Python module resolution;
-* actual bag metadata;
-* topic types and frequencies;
-* recorded QoS profiles;
-* actual `frame_id` values;
-* actual `/tf_static` rotations;
-* GPS validity behavior;
-* `/navheading` convention;
-* heading sign and angular reference;
-* `odom -> base` runtime behavior;
-* `/robot_pose` publication;
-* `/odom` publication;
-* TF tree consistency;
-* RViz configuration loading;
-* moving `/mid360_filtered` point cloud;
-* coherent global point-cloud mapping;
-* complete launch execution.
-
-The final runtime validation is intentionally kept separate from the offline validation so that assumptions about the dataset are not presented as confirmed behavior.
-
-## Build and Run
-
-The final tested build and run commands will be documented after validation on the target ROS2 Humble / Ubuntu 22.04 environment.
-
-Expected workflow:
-
-```bash
-cd ros2_ws
-
-source /opt/ros/humble/setup.bash
-
-# Install dependencies if required.
-# rosdep commands will be documented after validation.
-
-colcon build
-
-source install/setup.bash
-
-ros2 launch robot_bringup bag_localize.launch.py \
-  bag_path:=/absolute/path/to/bag
+```text
+Bag duration:           ~347.6 s
+GPS samples:            347   (~1 Hz)
+Heading samples:        347   (~1 Hz)
+PointCloud2 samples:    3138  (~9 Hz)
 ```
+
+First valid GPS fix: `lat 42.48871220, lon -83.55145510, alt 260.696 m` → becomes ENU origin `(0, 0, 0)`.
+
+The bag also contains optional topics using `ublox_msgs`, `nmea_msgs`, and `rtcm_msgs`. These aren't required by the baseline pipeline, which only relies on `/ublox_gps_node/fix`, `/navheading`, `/mid360_filtered`, and `/joint_states`; if the optional packages aren't installed, `rosbag2_player` simply warns and skips those topics.
+
+---
 
 ## Testing
 
-Offline localization mathematics tests can be executed with:
+**Localization math** (pure functions, testable without ROS2): ENU reference origin, East/North/altitude displacement, and quaternion→yaw at 0°, +90°, -90°, 180°.
+
+**ROS2 package tests:**
 
 ```bash
-python3 -m pytest \
-  src/robot_bringup/test/test_localization_math.py \
-  -v
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+colcon test --packages-select robot_bringup
+colcon test-result --verbose
 ```
 
-Current result:
+Result: `0 errors, 0 failures, 0 skipped`.
+
+---
+
+## Full-Run Runtime Validation
+
+`tools/run_full_validation.py` starts before bag playback, launches `bag_localize.launch.py`, and monitors `/robot_pose`, `/odom`, dynamic TF, and PointCloud2 throughout playback in ~10 s segments, then writes a report to `validation_results/`.
+
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+python3 tools/run_full_validation.py --bag-path /absolute/path/to/bag
+```
+
+**Reference run** (346.50 s):
 
 ```text
-6 passed
+Pose / Odometry / Dynamic TF messages:   3466 each
+PointCloud messages:                     3138
+
+Rates:
+  /robot_pose            10.00 Hz
+  /odom                  10.00 Hz
+  odom -> base TF        10.00 Hz
+  PointCloud2             9.06 Hz
+
+Trajectory:
+  Total path length       62.865 m
+  Net displacement         2.242 m
+  Max pose step             0.443 m
+  Unique motion updates       342
+
+Pose/Odom/TF cross-consistency: 0.000000000 m and 0.000000000 deg error
 ```
 
-## Design Principles
+Sanity checks: trajectory contains motion; no jump >1 m; point-cloud frame stays `base`; pose/odom/TF consistent. **No runtime consistency failure detected.** Full report: `validation_results/full_validation_reference.txt`.
 
-The implementation intentionally prioritizes the scoped requirements of the assignment.
+### Validation levels
 
-It does not currently introduce:
+1. **Mathematical correctness** — unit-tested GPS→ENU and quaternion→yaw, independent of ROS2.
+2. **Dataset consistency** — GPS trajectory inspected numerically; no implausible discontinuities.
+3. **ROS runtime consistency** — `/robot_pose`, `/odom`, and TF stayed internally consistent for the full bag.
+4. **Visualization** — RobotModel, TF, pose, and point cloud inspected together in RViz; trajectory and point-cloud motion looked coherent.
 
-* SLAM;
-* FAST-LIO;
-* LIO-SAM;
-* EKF sensor fusion;
-* advanced IMU fusion;
-* external mapping frameworks.
+**Limitation:** the dataset has no independent dynamic ground truth (mocap, survey trajectory, independent odometry), so absolute metrics like RMSE/ATE/RPE cannot be computed meaningfully. Validation here covers mathematical correctness, dataset continuity, and runtime/TF/visual consistency — not absolute localization accuracy.
 
-The optional `/mid360_imu` input is not currently used because GPS and `/navheading` are sufficient for the required baseline solution.
+---
 
-Additional localization or sensor-fusion methods should only be considered after the required solution is validated.
+## Notable Engineering Decisions
 
-## Known Assumptions
+- **RViz over remote X11:** during one long remote validation run, RViz crashed with a graphical segfault (exit code -11) partway through, while `rosbag2_player`, the localization node, TF publication, and the validation monitor all completed successfully (3138 point-cloud messages, all consistency checks passed). Treated as a remote graphical-session issue, not a localization failure. RViz runs normally on local Ubuntu execution.
 
-Current assumptions that require confirmation with the recorded dataset:
+---
 
-1. Static-frame rotations are currently initialized to zero because only translations were explicitly provided in the assignment document.
-2. The yaw extracted from `/navheading` is provisionally used directly as the robot orientation in the ENU frame.
-3. The exact relationship between the heading convention and ENU axes must be verified against robot motion in the bag.
-4. The RViz configuration has been validated as YAML but still requires runtime validation in RViz2.
+## Assumptions
 
-These assumptions will be updated after inspecting the recorded ROS2 data.
+1. The first valid GPS fix is an appropriate local ENU reference origin.
+2. `/navheading.msg.orientation` is the heading quaternion intended by the assignment.
+3. Direct quaternion-to-yaw extraction is the appropriate baseline heading implementation.
+4. The recorded `/tf_static` transforms represent the required static sensor geometry.
+5. Since `/mid360_filtered` is recorded in `base`, global point-cloud visualization depends primarily on the reconstructed `map -> odom -> base` chain.
+6. GPS + `/navheading` are sufficient for the requested baseline localization.
+7. The LiDAR IMU is optional and not fused into the baseline estimator.
 
-## Target Environment
+---
+
+## Scope and Possible Extensions
+
+Out of scope for this baseline: SLAM, FAST-LIO, LIO-SAM, EKF sensor fusion, factor graphs, advanced IMU integration, scan matching, external mapping frameworks.
+
+Possible future extensions: synchronized GPS/heading processing, IMU-assisted orientation estimation, EKF-based state estimation, LiDAR odometry, local/global SLAM, ground-truth comparison (if an independent reference trajectory becomes available), and automated trajectory plotting/quantitative evaluation.
+
+---
+
+## Final Status
 
 ```text
-Ubuntu 22.04
-ROS2 Humble
-Python 3.10
+GPS -> ENU                  PASS
+Quaternion -> yaw           PASS
+Dynamic odom -> base TF     PASS
+/robot_pose publication     PASS
+/odom publication           PASS
+Static TF / URDF            PASS
+ROS2 Humble build           PASS
+ROS2 tests                  PASS
+PointCloud2 reception       PASS
+TF runtime consistency      PASS
+RViz visualization          PASS
+Integrated launch           PASS
+Full bag runtime test       PASS
 ```
+
+The solution is considered complete for the requested baseline scope.
