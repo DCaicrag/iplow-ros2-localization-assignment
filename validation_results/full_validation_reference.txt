@@ -1,0 +1,397 @@
+============================================================================
+iPLOW FULL-RUN RUNTIME VALIDATION
+============================================================================
+Bag: /home/dc/datasets/mapping_nov_15_0
+Segment duration: 10 s
+
+Waiting for experiment to start...
+
+Starting complete iPlow experiment...
+rosbag2_player detected.
+Monitoring until bag playback finishes...
+
+First localization sample at bag time 1763218023.120
+
+========== SEGMENT 01 ==========
+Relative bag time:     0.0 ->    10.1 s
+Start XYZ:       (  0.000,   0.000,   0.000) m
+End XYZ:         (  0.000,   0.000,   0.005) m
+Segment path:      0.043 m
+Net displacement:   0.005 m
+Max pose step:     0.014 m
+Pose rate:         10.10 Hz
+Cloud rate:        10.20 Hz
+
+========== SEGMENT 02 ==========
+Relative bag time:    10.1 ->    20.2 s
+Start XYZ:       (  0.000,   0.000,   0.005) m
+End XYZ:         (  0.000,  -0.022,  -0.024) m
+Segment path:      0.058 m
+Net displacement:   0.037 m
+Max pose step:     0.013 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.90 Hz
+
+========== SEGMENT 03 ==========
+Relative bag time:    20.2 ->    30.3 s
+Start XYZ:       (  0.000,  -0.022,  -0.024) m
+End XYZ:         ( -0.025,  -0.044,  -0.125) m
+Segment path:      0.119 m
+Net displacement:   0.106 m
+Max pose step:     0.018 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.60 Hz
+
+========== SEGMENT 04 ==========
+Relative bag time:    30.3 ->    40.4 s
+Start XYZ:       ( -0.025,  -0.044,  -0.125) m
+End XYZ:         ( -0.041,  -0.067,  -0.174) m
+Segment path:      0.074 m
+Net displacement:   0.056 m
+Max pose step:     0.015 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.70 Hz
+
+========== SEGMENT 05 ==========
+Relative bag time:    40.4 ->    50.5 s
+Start XYZ:       ( -0.041,  -0.067,  -0.174) m
+End XYZ:         ( -0.058,  -0.067,  -0.222) m
+Segment path:      0.075 m
+Net displacement:   0.051 m
+Max pose step:     0.019 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.90 Hz
+
+========== SEGMENT 06 ==========
+Relative bag time:    50.5 ->    60.6 s
+Start XYZ:       ( -0.058,  -0.067,  -0.222) m
+End XYZ:         ( -0.173,  -0.056,  -0.287) m
+Segment path:      0.160 m
+Net displacement:   0.133 m
+Max pose step:     0.025 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.70 Hz
+
+========== SEGMENT 07 ==========
+Relative bag time:    60.6 ->    70.7 s
+Start XYZ:       ( -0.173,  -0.056,  -0.287) m
+End XYZ:         (  2.187,   2.388,  -0.368) m
+Segment path:      3.431 m
+Net displacement:   3.398 m
+Max pose step:     0.443 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.80 Hz
+
+========== SEGMENT 08 ==========
+Relative bag time:    70.7 ->    80.8 s
+Start XYZ:       (  2.187,   2.388,  -0.368) m
+End XYZ:         (  4.423,   3.455,  -0.708) m
+Segment path:      3.070 m
+Net displacement:   2.501 m
+Max pose step:     0.372 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.21 Hz
+
+========== SEGMENT 09 ==========
+Relative bag time:    80.8 ->    90.9 s
+Start XYZ:       (  4.423,   3.455,  -0.708) m
+End XYZ:         (  5.525,   1.655,  -0.502) m
+Segment path:      2.245 m
+Net displacement:   2.120 m
+Max pose step:     0.245 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.51 Hz
+
+========== SEGMENT 10 ==========
+Relative bag time:    90.9 ->   101.0 s
+Start XYZ:       (  5.525,   1.655,  -0.502) m
+End XYZ:         (  7.432,  -0.255,  -0.490) m
+Segment path:      2.711 m
+Net displacement:   2.700 m
+Max pose step:     0.272 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.31 Hz
+
+========== SEGMENT 11 ==========
+Relative bag time:   101.0 ->   111.1 s
+Start XYZ:       (  7.432,  -0.255,  -0.490) m
+End XYZ:         (  8.896,  -1.755,  -0.436) m
+Segment path:      2.100 m
+Net displacement:   2.096 m
+Max pose step:     0.226 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.71 Hz
+
+========== SEGMENT 12 ==========
+Relative bag time:   111.1 ->   121.2 s
+Start XYZ:       (  8.896,  -1.755,  -0.436) m
+End XYZ:         (  9.677,  -3.344,  -0.267) m
+Segment path:      2.056 m
+Net displacement:   1.778 m
+Max pose step:     0.266 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.71 Hz
+
+========== SEGMENT 13 ==========
+Relative bag time:   121.2 ->   131.3 s
+Start XYZ:       (  9.677,  -3.344,  -0.267) m
+End XYZ:         ( 10.556,  -3.410,  -0.452) m
+Segment path:      1.500 m
+Net displacement:   0.901 m
+Max pose step:     0.256 m
+Pose rate:         10.00 Hz
+Cloud rate:         7.72 Hz
+
+========== SEGMENT 14 ==========
+Relative bag time:   131.3 ->   141.4 s
+Start XYZ:       ( 10.556,  -3.410,  -0.452) m
+End XYZ:         (  9.553,  -2.399,  -0.369) m
+Segment path:      1.891 m
+Net displacement:   1.426 m
+Max pose step:     0.305 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.32 Hz
+
+========== SEGMENT 15 ==========
+Relative bag time:   141.4 ->   151.5 s
+Start XYZ:       (  9.553,  -2.399,  -0.369) m
+End XYZ:         (  7.597,  -0.489,  -0.402) m
+Segment path:      2.762 m
+Net displacement:   2.735 m
+Max pose step:     0.335 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.01 Hz
+
+========== SEGMENT 16 ==========
+Relative bag time:   151.5 ->   161.6 s
+Start XYZ:       (  7.597,  -0.489,  -0.402) m
+End XYZ:         (  6.051,   1.244,  -0.458) m
+Segment path:      2.348 m
+Net displacement:   2.323 m
+Max pose step:     0.260 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.41 Hz
+
+========== SEGMENT 17 ==========
+Relative bag time:   161.6 ->   171.7 s
+Start XYZ:       (  6.051,   1.244,  -0.458) m
+End XYZ:         (  4.538,   3.233,  -0.417) m
+Segment path:      2.575 m
+Net displacement:   2.499 m
+Max pose step:     0.370 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.31 Hz
+
+========== SEGMENT 18 ==========
+Relative bag time:   171.7 ->   181.8 s
+Start XYZ:       (  4.538,   3.233,  -0.417) m
+End XYZ:         (  2.935,   4.888,  -0.367) m
+Segment path:      2.517 m
+Net displacement:   2.305 m
+Max pose step:     0.293 m
+Pose rate:         10.00 Hz
+Cloud rate:         7.92 Hz
+
+========== SEGMENT 19 ==========
+Relative bag time:   181.8 ->   191.9 s
+Start XYZ:       (  2.935,   4.888,  -0.367) m
+End XYZ:         (  1.159,   6.376,  -0.286) m
+Segment path:      2.340 m
+Net displacement:   2.319 m
+Max pose step:     0.288 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.01 Hz
+
+========== SEGMENT 20 ==========
+Relative bag time:   191.9 ->   202.0 s
+Start XYZ:       (  1.159,   6.376,  -0.286) m
+End XYZ:         ( -0.723,   8.187,  -0.304) m
+Segment path:      2.642 m
+Net displacement:   2.612 m
+Max pose step:     0.271 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.11 Hz
+
+========== SEGMENT 21 ==========
+Relative bag time:   202.0 ->   212.1 s
+Start XYZ:       ( -0.723,   8.187,  -0.304) m
+End XYZ:         ( -2.244,   9.953,  -0.199) m
+Segment path:      2.401 m
+Net displacement:   2.333 m
+Max pose step:     0.279 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.81 Hz
+
+========== SEGMENT 22 ==========
+Relative bag time:   212.1 ->   222.2 s
+Start XYZ:       ( -2.244,   9.953,  -0.199) m
+End XYZ:         ( -3.782,  11.530,  -0.403) m
+Segment path:      2.354 m
+Net displacement:   2.212 m
+Max pose step:     0.349 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.51 Hz
+
+========== SEGMENT 23 ==========
+Relative bag time:   222.2 ->   232.3 s
+Start XYZ:       ( -3.782,  11.530,  -0.403) m
+End XYZ:         ( -4.949,  12.974,  -0.455) m
+Segment path:      2.213 m
+Net displacement:   1.858 m
+Max pose step:     0.368 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.31 Hz
+
+========== SEGMENT 24 ==========
+Relative bag time:   232.3 ->   242.4 s
+Start XYZ:       ( -4.949,  12.974,  -0.455) m
+End XYZ:         ( -5.484,  14.641,  -0.424) m
+Segment path:      2.036 m
+Net displacement:   1.750 m
+Max pose step:     0.372 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.51 Hz
+
+========== SEGMENT 25 ==========
+Relative bag time:   242.4 ->   252.5 s
+Start XYZ:       ( -5.484,  14.641,  -0.424) m
+End XYZ:         ( -5.591,  13.374,  -0.476) m
+Segment path:      1.926 m
+Net displacement:   1.272 m
+Max pose step:     0.273 m
+Pose rate:         10.00 Hz
+Cloud rate:         7.92 Hz
+
+========== SEGMENT 26 ==========
+Relative bag time:   252.5 ->   262.6 s
+Start XYZ:       ( -5.591,  13.374,  -0.476) m
+End XYZ:         ( -4.497,  11.530,  -0.541) m
+Segment path:      2.300 m
+Net displacement:   2.145 m
+Max pose step:     0.406 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.71 Hz
+
+========== SEGMENT 27 ==========
+Relative bag time:   262.6 ->   272.7 s
+Start XYZ:       ( -4.497,  11.530,  -0.541) m
+End XYZ:         ( -2.886,   9.942,  -0.543) m
+Segment path:      2.276 m
+Net displacement:   2.263 m
+Max pose step:     0.249 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.11 Hz
+
+========== SEGMENT 28 ==========
+Relative bag time:   272.7 ->   282.8 s
+Start XYZ:       ( -2.886,   9.942,  -0.543) m
+End XYZ:         ( -1.283,   8.376,  -0.517) m
+Segment path:      2.245 m
+Net displacement:   2.241 m
+Max pose step:     0.246 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.41 Hz
+
+========== SEGMENT 29 ==========
+Relative bag time:   282.8 ->   292.9 s
+Start XYZ:       ( -1.283,   8.376,  -0.517) m
+End XYZ:         (  0.411,   6.687,  -0.582) m
+Segment path:      2.395 m
+Net displacement:   2.392 m
+Max pose step:     0.260 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.91 Hz
+
+========== SEGMENT 30 ==========
+Relative bag time:   292.9 ->   303.0 s
+Start XYZ:       (  0.411,   6.687,  -0.582) m
+End XYZ:         (  1.274,   6.865,  -0.487) m
+Segment path:      1.871 m
+Net displacement:   0.886 m
+Max pose step:     0.277 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.01 Hz
+
+========== SEGMENT 31 ==========
+Relative bag time:   303.0 ->   313.1 s
+Start XYZ:       (  1.274,   6.865,  -0.487) m
+End XYZ:         (  1.258,   4.788,  -0.580) m
+Segment path:      2.101 m
+Net displacement:   2.079 m
+Max pose step:     0.280 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.22 Hz
+
+========== SEGMENT 32 ==========
+Relative bag time:   313.1 ->   323.2 s
+Start XYZ:       (  1.258,   4.788,  -0.580) m
+End XYZ:         (  0.518,   3.355,  -0.437) m
+Segment path:      1.737 m
+Net displacement:   1.619 m
+Max pose step:     0.207 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.71 Hz
+
+========== SEGMENT 33 ==========
+Relative bag time:   323.2 ->   333.3 s
+Start XYZ:       (  0.518,   3.355,  -0.437) m
+End XYZ:         ( -0.189,   2.744,  -0.222) m
+Segment path:      1.033 m
+Net displacement:   0.959 m
+Max pose step:     0.122 m
+Pose rate:         10.00 Hz
+Cloud rate:         8.71 Hz
+
+========== SEGMENT 34 ==========
+Relative bag time:   333.3 ->   343.4 s
+Start XYZ:       ( -0.189,   2.744,  -0.222) m
+End XYZ:         ( -0.880,   2.188,  -0.153) m
+Segment path:      0.906 m
+Net displacement:   0.889 m
+Max pose step:     0.127 m
+Pose rate:         10.00 Hz
+Cloud rate:         9.11 Hz
+
+rosbag2_player finished.
+
+============================================================================
+iPLOW FULL-RUN CONSISTENCY SUMMARY
+============================================================================
+Analyzed duration:          346.50 s
+Pose messages:              3466
+Odometry messages:          3466
+Dynamic TF messages:        3466
+PointCloud messages:        3138
+
+Pose mean rate:             10.00 Hz
+Odometry mean rate:         10.00 Hz
+TF mean rate:               10.00 Hz
+PointCloud mean rate:       9.06 Hz
+
+Total pose path:            62.865 m
+Net displacement:           2.242 m
+Maximum pose step:          0.443 m
+Maximum yaw step:           0.002 deg
+Unique motion updates:      342
+PointCloud frame(s):        ['base']
+
+--- SAME-TIMESTAMP CONSISTENCY ---
+Pose/Odom max position err: 0.000000000 m
+Pose/Odom max yaw error:    0.000000000 deg
+Pose/TF max position err:   0.000000000 m
+Pose/TF max yaw error:      0.000000000 deg
+
+--- SANITY CHECKS ---
+PASS   - Trajectory contains motion
+PASS   - No >1 m localization jump
+PASS   - PointCloud frame remains base
+PASS   - Pose and Odom are consistent
+PASS   - Pose and TF are consistent
+
+RESULT: No runtime consistency failure detected.
+============================================================================
+
+Stopping ROS2 launch...
+
+Report saved to:
+/home/dc/projects/iplow-ros2-localization-assignment/validation_results/full_validation_20260814_140258.txt

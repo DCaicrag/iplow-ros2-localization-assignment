@@ -102,7 +102,7 @@
   <joint name="body_to_livox" type="fixed">
     <parent link="body"/>
     <child link="livox_frame"/>
-    <origin xyz="-0.1201 0.0026 0.9655" rpy="0 0 0"/>
+    <origin xyz="-0.1201 0.0026 0.9655" rpy="3.141592653589793 0.0 1.5707963267948966"/>
   </joint>
 
   <joint name="livox_to_imu" type="fixed">
