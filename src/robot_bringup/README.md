@@ -1,4 +1,4 @@
-# iPlow ROS2 Localization and Visualization
+# iPlowRobot ROS2 Localization and Visualization
 
 ROS2 Humble implementation for the iPlow Robot technical assignment.
 
