@@ -132,7 +132,7 @@ PointCloud2 samples:    3138  (~9 Hz)
 
 First valid GPS fix: `lat 42.48871220, lon -83.55145510, alt 260.696 m` → becomes ENU origin `(0, 0, 0)`.
 
-The bag also contains optional topics using `ublox_msgs`, `nmea_msgs`, and `rtcm_msgs`. These aren't required by the baseline pipeline, which only relies on `/ublox_gps_node/fix`, `/navheading`, `/mid360_filtered`, and `/joint_states`; if the optional packages aren't installed, `rosbag2_player` simply warns and skips those topics.
+The bag also contains optional topics using `ublox_msgs`, `nmea_msgs`, and `rtcm_msgs`. These aren't required by the baseline localization and visualization pipeline. Localization relies on `/ublox_gps_node/fix` and `/navheading`, while `/mid360_filtered` is used for RViz point-cloud visualization. If the optional message packages aren't installed, `rosbag2_player` warns and skips those topics.
 
 ---
 
@@ -190,7 +190,7 @@ Sanity checks: trajectory contains motion; no jump >1 m; point-cloud frame stays
 
 1. **Mathematical correctness** — unit-tested GPS→ENU and quaternion→yaw, independent of ROS2.
 2. **Dataset consistency** — GPS trajectory inspected numerically; no implausible discontinuities.
-3. **ROS runtime consistency** — `/robot_pose`, `/odom`, and TF stayed internally consistent for the full bag.
+3. **ROS runtime consistency** — `/robot_pose`, `/odom`, and TF stayed internally consistent throughout the analyzed localization run.
 4. **Visualization** — RobotModel, TF, pose, and point cloud inspected together in RViz; trajectory and point-cloud motion looked coherent.
 
 **Limitation:** the dataset has no independent dynamic ground truth (mocap, survey trajectory, independent odometry), so absolute metrics like RMSE/ATE/RPE cannot be computed meaningfully. Validation here covers mathematical correctness, dataset continuity, and runtime/TF/visual consistency — not absolute localization accuracy.
